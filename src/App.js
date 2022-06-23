@@ -28,7 +28,7 @@ function App() {
       init={particlesInit}
       loaded={particlesLoaded}
       options={{
-        fpsLimit: 120,
+        fpsLimit: 30,
         interactivity: {
           events: {
             onClick: {
@@ -43,7 +43,7 @@ function App() {
           },
           modes: {
             push: {
-              quantity: 4,
+              quantity: 10,
             },
             repulse: {
               distance: 200,
