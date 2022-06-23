@@ -32,6 +32,11 @@ class App extends Component {
   onInputChange = (e) => {
     console.log(e.target.value)
   }
+
+  onButtonSubmit = () => {
+    console.log('click')
+  }
+
   render() {
     return (
       <div className="App">
@@ -40,7 +45,7 @@ class App extends Component {
           init={particlesInit}
           loaded={particlesLoaded}
           options={{
-            fpsLimit: 30,
+            fpsLimit: 60,
             interactivity: {
               events: {
                 onClick: {
@@ -59,13 +64,13 @@ class App extends Component {
                 },
                 repulse: {
                   distance: 200,
-                  duration: 0.4,
+                  duration: 0.0,
                 },
               },
             },
             particles: {
               color: {
-                value: "#ffffff",
+                value: "#4CA1AF",
               },
               links: {
                 color: "#ffffff",
@@ -110,7 +115,9 @@ class App extends Component {
         <Navigation />
         <Logo />
         <Rank />
-        <ImageLinkForm onInputChange={this.onInputChange} />
+        <ImageLinkForm 
+        onInputChange={this.onInputChange} 
+        onButtonSubmit={this.onButtonSubmit} />
         {/* <FaceRecognition /> */}
       </div>
     );
