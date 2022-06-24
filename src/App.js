@@ -8,16 +8,7 @@ import { loadFull } from "tsparticles";
 import "./App.css";
 
 
-const {grpc} = require("clarifai-nodejs-grpc");
-const service = require("clarifai-nodejs-grpc/proto/clarifai/api/service_pb");
-const resources = require("clarifai-nodejs-grpc/proto/clarifai/api/resources_pb");
-const {StatusCode} = require("clarifai-nodejs-grpc/proto/clarifai/api/status/status_code_pb");
-const {V2Client} = require("clarifai-nodejs-grpc/proto/clarifai/api/service_grpc_pb");
 
-const clarifai = new V2Client("api.clarifai.com", grpc.ChannelCredentials.createSsl());
-
-const metadata = new grpc.Metadata();
-metadata.set("authorization", "eaa584fedfc04701a5aed4a0c8abee94");
 
 const particlesInit = async (main) => {
   console.log(main);
@@ -48,40 +39,7 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
-    console.log('click')
-    const request = new service.PostModelOutputsRequest();
-// This is the model ID of a publicly available General model. You may use any other public or custom model ID.
-request.setModelId("aaa03c23b3724a16a56b629203edc62c");
-request.addInputs(
-    new resources.Input()
-        .setData(
-            new resources.Data()
-                .setImage(
-                    new resources.Image()
-                        .setUrl("https://samples.clarifai.com/dog2.jpeg")
-                )
-        )
-)
-
-clarifai.postModelOutputs(
-    request,
-    metadata,
-    (error, response) => {
-        if (error) {
-            throw error;
-        }
-
-        if (response.getStatus().getCode() !== StatusCode.SUCCESS) {
-            throw "Error: " + response.getStatus();
-        }
-
-        console.log("Predicted concepts, with confidence values:")
-        for (const concept of response.getOutputsList()[0].getData().getConceptsList()) {
-            console.log(concept.getName() + " " + concept.getValue());
-        }
-    }
-)
-   
+    console.log('click') 
   }
 
   render() {
@@ -107,7 +65,7 @@ clarifai.postModelOutputs(
               },
               modes: {
                 push: {
-                  quantity: 10,
+                  quantity: 3,
                 },
                 repulse: {
                   distance: 200,
