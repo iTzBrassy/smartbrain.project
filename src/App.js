@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Navigation from "./Components/Navigation/Navigation.js";
 import Logo from "./Components/Logo/Logo.js";
 import SignIn from "./Components/SignIn/SignIn.js";
+import Register from "./Components/Register/Register.js";
 import ImageLinkForm from "./Components/ImageLinkForm/ImageLinkForm.js";
 import Rank from "./Components/Rank/Rank.js";
 import FaceRecognition from "./Components/FaceRecognition/FaceRecognition.js";
@@ -30,6 +31,8 @@ class App extends Component {
       input: "",
       imageUrl: "",
       box: "",
+      route: "SignIn",
+      isSignedIn: false
     };
   }
 
@@ -51,7 +54,7 @@ class App extends Component {
   };
 
   displayFaceBox = (box) => {
-    this.setState({ box: box }); 
+    this.setState({ box: box });
   };
   onButtonSubmit = () => {
     const USER_ID = "8d9rkaggzq0g";
@@ -106,94 +109,121 @@ class App extends Component {
     )
       .then((response) => response.text())
       .then((result) => JSON.parse(result))
-      .then((data) => this.calculateFaceLocation(data))
+      .then((data) => this.displayFaceBox(this.calculateFaceLocation(data)))
       .catch((error) => console.log("error", error));
   };
 
+  onRouteChange = (route) => {
+    if (route === 'Sign Out') {
+      this.setState({isSignedIn: false})
+    } else if (route === 'home'){
+      this.setState({isSignedIn: true})
+    }
+    this.setState({ route: route });
+  };
+
+  particleOptions = {
+    fpsLimit: 60,
+    interactivity: {
+      events: {
+        onClick: {
+          enable: true,
+          mode: "push",
+        },
+        onHover: {
+          enable: true,
+          mode: "repulse",
+        },
+        resize: true,
+      },
+      modes: {
+        push: {
+          quantity: 3,
+        },
+        repulse: {
+          distance: 200,
+          duration: 0.0,
+        },
+      },
+    },
+    particles: {
+      color: {
+        value: "#4CA1AF",
+      },
+      links: {
+        color: "#ffffff",
+        distance: 150,
+        enable: true,
+        opacity: 0.5,
+        width: 1,
+      },
+      collisions: {
+        enable: true,
+      },
+      move: {
+        direction: "none",
+        enable: true,
+        outModes: {
+          default: "bounce",
+        },
+        random: false,
+        speed: 2,
+        straight: false,
+      },
+      number: {
+        density: {
+          enable: true,
+          area: 800,
+        },
+        value: 10,
+      },
+      opacity: {
+        value: 0.5,
+      },
+      shape: {
+        type: "circle",
+      },
+      size: {
+        value: { min: 1, max: 5 },
+      },
+    },
+    detectRetina: true,
+  };
+
   render() {
+    const {
+    isSignedIn, 
+    imageUrl,
+    route,
+    box
+  } = this.state
     return (
       <div className="App">
         <Particles
           id="tsparticles"
           init={particlesInit}
           loaded={particlesLoaded}
-          options={{
-            fpsLimit: 60,
-            interactivity: {
-              events: {
-                onClick: {
-                  enable: true,
-                  mode: "push",
-                },
-                onHover: {
-                  enable: true,
-                  mode: "repulse",
-                },
-                resize: true,
-              },
-              modes: {
-                push: {
-                  quantity: 3,
-                },
-                repulse: {
-                  distance: 200,
-                  duration: 0.0,
-                },
-              },
-            },
-            particles: {
-              color: {
-                value: "#4CA1AF",
-              },
-              links: {
-                color: "#ffffff",
-                distance: 150,
-                enable: true,
-                opacity: 0.5,
-                width: 1,
-              },
-              collisions: {
-                enable: true,
-              },
-              move: {
-                direction: "none",
-                enable: true,
-                outModes: {
-                  default: "bounce",
-                },
-                random: false,
-                speed: 2,
-                straight: false,
-              },
-              number: {
-                density: {
-                  enable: true,
-                  area: 800,
-                },
-                value: 80,
-              },
-              opacity: {
-                value: 0.5,
-              },
-              shape: {
-                type: "circle",
-              },
-              size: {
-                value: { min: 1, max: 5 },
-              },
-            },
-            detectRetina: true,
-          }}
+          options={this.particleOptions}
         />
-        <Navigation />
-        <SignIn />
-        <Logo />
-        <Rank />
-        <ImageLinkForm
-          onInputChange={this.onInputChange}
-          onButtonSubmit={this.onButtonSubmit}
-        />
-        <FaceRecognition imageUrl={this.state.imageUrl} />
+        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
+        {route === "home" ? (
+          <div>
+            <Logo />
+            <Rank />
+            <ImageLinkForm
+              onInputChange={this.onInputChange}
+              onButtonSubmit={this.onButtonSubmit}
+            />
+            <FaceRecognition
+              box={box}
+              imageUrl={imageUrl}
+            />
+          </div>
+        ) : route === "SignIn" ? (
+          <SignIn onRouteChange={this.onRouteChange} />
+        ) : (
+          <Register />
+        )}
       </div>
     );
   }
