@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Navigation from "./Components/Navigation/Navigation.js";
 import Logo from "./Components/Logo/Logo.js";
+import SignIn from "./Components/SignIn/SignIn.js";
 import ImageLinkForm from "./Components/ImageLinkForm/ImageLinkForm.js";
 import Rank from "./Components/Rank/Rank.js";
 import FaceRecognition from "./Components/FaceRecognition/FaceRecognition.js";
@@ -37,17 +38,21 @@ class App extends Component {
   };
 
   calculateFaceLocation = (data) => {
-   const parsedData = data;
-   console.log(parsedData.outputs)
-   const picture = document.getElementById('inputimage');
-   const width = Number(picture.width);
-   const height = Number(picture.height);
-   
-  }
+    const parsedData = data.outputs[0].data.regions[0].region_info.bounding_box;
+    const picture = document.getElementById("inputimage");
+    const width = Number(picture.width);
+    const height = Number(picture.height);
+    return {
+      leftCol: parsedData.left_col * width,
+      topRow: parsedData.top_row * height,
+      rightCol: width - parsedData.right_col * width,
+      bottomRow: height - parsedData.bottom_row * height,
+    };
+  };
 
-  displayFaceBox = (box) =>{
-    this.setState({box: box})
-  }
+  displayFaceBox = (box) => {
+    this.setState({ box: box }); 
+  };
   onButtonSubmit = () => {
     const USER_ID = "8d9rkaggzq0g";
     // Your PAT (Personal Access Token) can be found in the portal under Authentification
@@ -99,9 +104,9 @@ class App extends Component {
         "/outputs",
       requestOptions
     )
-      .then(response => this.calculateFaceLocation(response.json()))
-      
-      .then((result) => console.log(result))
+      .then((response) => response.text())
+      .then((result) => JSON.parse(result))
+      .then((data) => this.calculateFaceLocation(data))
       .catch((error) => console.log("error", error));
   };
 
@@ -181,6 +186,7 @@ class App extends Component {
           }}
         />
         <Navigation />
+        <SignIn />
         <Logo />
         <Rank />
         <ImageLinkForm
