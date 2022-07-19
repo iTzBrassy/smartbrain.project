@@ -35,11 +35,11 @@ class App extends Component {
       isSignedIn: false,
       user: {
         id: "",
-      name: "",
-      email: "",
-      entries: 0,
-      joined: '',
-      }
+        name: "",
+        email: "",
+        entries: 0,
+        joined: "",
+      },
     };
   }
 
@@ -48,14 +48,16 @@ class App extends Component {
   };
 
   loadUser = (data) => {
-    this.setState({user: {
-      id: data.id,
-      name: data.name,
-      email: data.email,
-      entries: data.entries,
-      joined: data.joined,
-    }})
-  }
+    this.setState({
+      user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        entries: data.entries,
+        joined: data.joined,
+      },
+    });
+  };
 
   calculateFaceLocation = (data) => {
     const parsedData = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -69,8 +71,6 @@ class App extends Component {
       bottomRow: height - parsedData.bottom_row * height,
     };
   };
-
-
 
   displayFaceBox = (box) => {
     this.setState({ box: box });
@@ -128,7 +128,22 @@ class App extends Component {
     )
       .then((response) => response.text())
       .then((result) => JSON.parse(result))
-      .then((data) => this.displayFaceBox(this.calculateFaceLocation(data)))
+      .then((data) => {
+        if (data) {
+          fetch("http://localhost:3001/image", {
+            method: "put",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: this.state.user.id,
+            }),
+          })
+            .then((data) => data.json())
+            .then((count) => {
+              this.setState(Object.assign(this.state.user, { entries: count }));
+            });
+        }
+        this.displayFaceBox(this.calculateFaceLocation(data));
+      })
       .catch((error) => console.log("error", error));
   };
 
@@ -226,7 +241,10 @@ class App extends Component {
         {route === "home" ? (
           <div>
             <Logo />
-            <Rank name={this.state.user.name} entries={this.state.user.entries} />
+            <Rank
+              name={this.state.user.name}
+              entries={this.state.user.entries}
+            />
             <ImageLinkForm
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
@@ -236,7 +254,10 @@ class App extends Component {
         ) : route === "SignIn" ? (
           <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
         ) : (
-          <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+          <Register
+            loadUser={this.loadUser}
+            onRouteChange={this.onRouteChange}
+          />
         )}
       </div>
     );
