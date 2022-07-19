@@ -30,9 +30,16 @@ class App extends Component {
     this.state = {
       input: "",
       imageUrl: "",
-      box: "",
+      box: {},
       route: "SignIn",
       isSignedIn: false,
+      user: {
+        id: "",
+      name: "",
+      email: "",
+      entries: 0,
+      joined: '',
+      }
     };
   }
 
@@ -40,7 +47,15 @@ class App extends Component {
     this.setState({ input: e.target.value });
   };
 
-  
+  loadUser = (data) => {
+    this.setState({user: {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      entries: data.entries,
+      joined: data.joined,
+    }})
+  }
 
   calculateFaceLocation = (data) => {
     const parsedData = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -211,7 +226,7 @@ class App extends Component {
         {route === "home" ? (
           <div>
             <Logo />
-            <Rank />
+            <Rank name={this.state.user.name} entries={this.state.user.entries} />
             <ImageLinkForm
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
@@ -219,9 +234,9 @@ class App extends Component {
             <FaceRecognition box={box} imageUrl={imageUrl} />
           </div>
         ) : route === "SignIn" ? (
-          <SignIn onRouteChange={this.onRouteChange} />
+          <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
         ) : (
-          <Register />
+          <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
         )}
       </div>
     );
