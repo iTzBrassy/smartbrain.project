@@ -32,13 +32,15 @@ class App extends Component {
       imageUrl: "",
       box: "",
       route: "SignIn",
-      isSignedIn: false
+      isSignedIn: false,
     };
   }
 
   onInputChange = (e) => {
     this.setState({ input: e.target.value });
   };
+
+  
 
   calculateFaceLocation = (data) => {
     const parsedData = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -52,6 +54,8 @@ class App extends Component {
       bottomRow: height - parsedData.bottom_row * height,
     };
   };
+
+
 
   displayFaceBox = (box) => {
     this.setState({ box: box });
@@ -114,10 +118,10 @@ class App extends Component {
   };
 
   onRouteChange = (route) => {
-    if (route === 'Sign Out') {
-      this.setState({isSignedIn: false})
-    } else if (route === 'home'){
-      this.setState({isSignedIn: true})
+    if (route === "Sign Out") {
+      this.setState({ isSignedIn: false });
+    } else if (route === "home") {
+      this.setState({ isSignedIn: true });
     }
     this.setState({ route: route });
   };
@@ -191,12 +195,7 @@ class App extends Component {
   };
 
   render() {
-    const {
-    isSignedIn, 
-    imageUrl,
-    route,
-    box
-  } = this.state
+    const { isSignedIn, imageUrl, route, box } = this.state;
     return (
       <div className="App">
         <Particles
@@ -205,7 +204,10 @@ class App extends Component {
           loaded={particlesLoaded}
           options={this.particleOptions}
         />
-        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
+        <Navigation
+          isSignedIn={isSignedIn}
+          onRouteChange={this.onRouteChange}
+        />
         {route === "home" ? (
           <div>
             <Logo />
@@ -214,10 +216,7 @@ class App extends Component {
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
             />
-            <FaceRecognition
-              box={box}
-              imageUrl={imageUrl}
-            />
+            <FaceRecognition box={box} imageUrl={imageUrl} />
           </div>
         ) : route === "SignIn" ? (
           <SignIn onRouteChange={this.onRouteChange} />
