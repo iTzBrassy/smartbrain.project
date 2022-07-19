@@ -63,7 +63,7 @@ class App extends Component {
   onButtonSubmit = () => {
     const USER_ID = "8d9rkaggzq0g";
     // Your PAT (Personal Access Token) can be found in the portal under Authentification
-    const PAT = "eaa584fedfc04701a5aed4a0c8abee94";
+    const PAT = "Key";
     const APP_ID = "a962ef18bb2d47a287e9e9f8f2bd0a94";
     const MODEL_ID = "face-detection";
     const MODEL_VERSION_ID = "45fb9a671625463fa646c3523a3087d5";
